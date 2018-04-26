@@ -8,14 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		3B0791DE2088D3DE00A39104 /* Vito.h in Headers */ = {isa = PBXBuildFile; fileRef = 3B0791DC2088D3DE00A39104 /* Vito.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3B0791E72088D46100A39104 /* UIViewController+Transition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B0791E52088D46100A39104 /* UIViewController+Transition.swift */; };
+		3B0791E72088D46100A39104 /* UIViewController+DisplayChild.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B0791E52088D46100A39104 /* UIViewController+DisplayChild.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3B0791D92088D3DE00A39104 /* Vito.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Vito.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B0791DC2088D3DE00A39104 /* Vito.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vito.h; sourceTree = "<group>"; };
 		3B0791DD2088D3DE00A39104 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3B0791E52088D46100A39104 /* UIViewController+Transition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Transition.swift"; sourceTree = "<group>"; };
+		3B0791E52088D46100A39104 /* UIViewController+DisplayChild.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+DisplayChild.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,7 +48,7 @@
 		3B0791DB2088D3DE00A39104 /* Vito */ = {
 			isa = PBXGroup;
 			children = (
-				3B0791E52088D46100A39104 /* UIViewController+Transition.swift */,
+				3B0791E52088D46100A39104 /* UIViewController+DisplayChild.swift */,
 				3B0791DC2088D3DE00A39104 /* Vito.h */,
 				3B0791DD2088D3DE00A39104 /* Info.plist */,
 			);
@@ -134,7 +134,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B0791E72088D46100A39104 /* UIViewController+Transition.swift in Sources */,
+				3B0791E72088D46100A39104 /* UIViewController+DisplayChild.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
