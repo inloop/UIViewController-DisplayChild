@@ -23,7 +23,7 @@ public extension UIViewController {
      - Parameter completion: a closure which is called after the child view controller presentation is finished.
      - Returns: Newly created and embedded or already existing controller of specified type.
      */
-    @discardableResult func transition<T: InstantiableViewController>(toType viewControllerType: T.Type,
+    @discardableResult func displayChild<T: InstantiableViewController>(ofType viewControllerType: T.Type,
                                                                       in optionalContainerView: UIView? = nil,
                                                                       animated: Bool = true,
                                                                       configuration: ((T) -> Void)? = nil,
