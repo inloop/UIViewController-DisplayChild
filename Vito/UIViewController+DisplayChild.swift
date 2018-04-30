@@ -46,13 +46,7 @@ public extension UIViewController {
     }
 
     private func presentedController(with newController: UIViewController) -> UIViewController {
-        var result: UIViewController
-        if let navigationViewController = newController.navigationController {
-            result = navigationViewController
-        } else {
-            result = newController
-        }
-        return result
+        return newController.navigationController ?? newController
     }
 
     /**
@@ -98,13 +92,11 @@ public extension UIViewController {
 
     func childViewController<T>(in optionalContainerView: UIView? = nil) -> T? {
         let containerView = optionalContainerView ?? view!
-        let result = childViewController(at: containerView) as? T
-        return result
+        return childViewController(at: containerView) as? T
     }
 
     func hasChild<T>(ofType controllerType: T.Type, in optionalContainerView: UIView? = nil) -> Bool {
-        let containerView = optionalContainerView ?? view!
-        let exists: T? = childViewController(in: containerView)
+        let exists: T? = childViewController(in: optionalContainerView)
         return exists != nil
     }
 
