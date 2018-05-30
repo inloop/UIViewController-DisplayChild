@@ -24,10 +24,10 @@ public extension UIViewController {
      - Returns: Newly created and embedded or already existing controller of specified type.
      */
     @discardableResult func displayChild<T: InstantiableViewController>(ofType viewControllerType: T.Type,
-                                                                      in optionalContainerView: UIView? = nil,
-                                                                      animated: Bool = true,
-                                                                      configuration: ((T) -> Void)? = nil,
-                                                                      completion: ((T) -> Void)? = nil) -> T {
+                                                                        in optionalContainerView: UIView? = nil,
+                                                                        animated: Bool = true,
+                                                                        configuration: ((T) -> Void)? = nil,
+                                                                        completion: ((T) -> Void)? = nil) -> T {
         let result: T
         let containerView = optionalContainerView ?? view!
         if let existingController: T = childViewController(in: containerView) {
@@ -61,17 +61,27 @@ public extension UIViewController {
                             animated: Bool = true,
                             completion: VoidClosure? = nil) {
         let containerView = optionalContainerView ?? view!
-        prepare(newChild, for: containerView)
+        addChildViewController(newChild)
+        /*
+         We set the frame in advance, before autolayout does the same again in switchViews().
+         This is a workaround for users who embed UICollectionView somewhere in the child and experience the
+         dreaded "the item height must be less than the height of the UICollectionView" warning. (even if they
+         properly react to viewDidLayoutSubviews and change the item size the warning is always present otherwise)
+         */
+        newChild.view.frame = containerView.bounds
         if let existingChild = childViewController(at: containerView) {
             existingChild.willMove(toParentViewController: nil)
             if animated {
-                UIView.transition(from: existingChild.view,
-                                  to: newChild.view,
+                UIView.transition(with: containerView,
                                   duration: UIViewController.embedTransitionAnimationDuration,
-                                  options: [.transitionCrossDissolve]) { [weak self] _ in
-                                    self?.switchControllers(new: newChild, old: existingChild)
+                                  options: [.transitionCrossDissolve],
+                                  animations: {
+                                    self.switchViews(in: containerView, new: newChild.view!, old: existingChild.view!)
+                },
+                                  completion: { _ in
+                                    self.switchControllers(new: newChild, old: existingChild)
                                     completion?()
-                }
+                })
             } else {
                 switchViews(in: containerView, new: newChild.view!, old: existingChild.view!)
                 switchControllers(new: newChild, old: existingChild)
@@ -105,16 +115,9 @@ public extension UIViewController {
         return childViewControllers.first(where: { containerView.subviews.contains($0.view) })
     }
 
-    private func prepare(_ child: UIViewController, for containerView: UIView) {
-        child.view?.translatesAutoresizingMaskIntoConstraints = true
-        child.view?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        child.view?.frame = containerView.bounds
-        addChildViewController(child)
-    }
-
     private func switchViews(in container: UIView, new: UIView, old: UIView) {
         old.removeFromSuperview()
-        container.addSubview(new)
+        container.pinSubview(new)
     }
 
     private func switchControllers(new: UIViewController, old: UIViewController) {
@@ -123,7 +126,18 @@ public extension UIViewController {
     }
 
     private func embed(_ child: UIViewController, in containerView: UIView) {
-        containerView.addSubview(child.view!)
+        containerView.pinSubview(child.view!)
         child.didMove(toParentViewController: self)
+    }
+}
+
+private extension UIView {
+    func pinSubview(_ subview: UIView) {
+        subview.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(subview)
+        let views = ["v": subview]
+        let vertical = NSLayoutConstraint.constraints(withVisualFormat: "V:|[v]|", metrics: nil, views: views)
+        let horizontal = NSLayoutConstraint.constraints(withVisualFormat: "H:|[v]|", metrics: nil, views: views)
+        NSLayoutConstraint.activate(vertical + horizontal)
     }
 }
