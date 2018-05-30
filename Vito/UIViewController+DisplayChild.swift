@@ -63,7 +63,7 @@ public extension UIViewController {
         let containerView = optionalContainerView ?? view!
         addChildViewController(newChild)
         /*
-         We set the frame in advance, before autolayout does the same again in swichViews().
+         We set the frame in advance, before autolayout does the same again in switchViews().
          This is a workaround for users who embed UICollectionView somewhere in the child and experience the
          dreaded "the item height must be less than the height of the UICollectionView" warning. (even if they
          properly react to viewDidLayoutSubviews and change the item size the warning is always present otherwise)
