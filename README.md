@@ -13,6 +13,8 @@
 Example:
 
 ```swift
+import UIViewController_DisplayChild
+
 displayChild(
   ofType: ErrorViewController.self,
   in: containerView,
