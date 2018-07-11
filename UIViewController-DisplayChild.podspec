@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name             = 'Vito'
+  s.name             = 'UIViewController-DisplayChild'
   s.version          = '0.0.1'
   s.summary          = 'UIViewController containment made easy'
   s.description      = <<-DESC
@@ -14,5 +14,5 @@ The solution: transition to type, instead of an instance. If the instance does n
   s.source           = { :git => 'https://github.com/inloop/Vito.git', :tag => s.version.to_s }
   s.ios.deployment_target = '10.0'
   s.swift_version    = '4.1'
-  s.source_files = 'Vito/**/*'
+  s.source_files = 'UIViewController-DisplayChild/**/*'
 end
