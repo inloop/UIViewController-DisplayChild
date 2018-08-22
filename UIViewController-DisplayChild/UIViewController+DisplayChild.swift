@@ -9,13 +9,13 @@ public protocol InstantiableViewController where Self: UIViewController {
 public extension UIViewController {
     public typealias VoidClosure = () -> Void
 
-    private static let embedTransitionAnimationDuration = 0.25
+    static let embedTransitionAnimationDuration = 0.25
 
     /**
      Detects if a child view controller of specified type is already embedded.
      If it is, configuration and completion closures are called on existing and this one is returned.
      If it does not exist yet, it is instantiated, configured and embedded in specified container view.
-     - Parameter toType: a view controller type to embed
+     - Parameter ofType: a view controller type to embed
      - Parameter in: a view to embed child to. The child is embedded to the `self.view` if this is nil. Nil is the default value.
      - Parameter animated: if there is already embedded child in `containerView` the transition is animated if `true`
      - Parameter configuration: a closure which is called after the controller is initialized.
@@ -102,7 +102,17 @@ public extension UIViewController {
 
     func childViewController<T>(in optionalContainerView: UIView? = nil) -> T? {
         let containerView = optionalContainerView ?? view!
-        return childViewController(at: containerView) as? T
+        let result: T?
+        //see also `presentedController(with:)
+        if let controller = childViewController(at: containerView) as? T {
+            result = controller
+        } else if let navigationController = childViewController(at: containerView) as? UINavigationController,
+            let controller = navigationController.viewController(ofType: T.self) {
+            result = controller
+        } else {
+            result = nil
+        }
+        return result
     }
 
     func hasChild<T>(ofType controllerType: T.Type, in optionalContainerView: UIView? = nil) -> Bool {
@@ -139,5 +149,12 @@ private extension UIView {
         let vertical = NSLayoutConstraint.constraints(withVisualFormat: "V:|[v]|", metrics: nil, views: views)
         let horizontal = NSLayoutConstraint.constraints(withVisualFormat: "H:|[v]|", metrics: nil, views: views)
         NSLayoutConstraint.activate(vertical + horizontal)
+    }
+}
+
+private extension UINavigationController {
+    func viewController<T>(ofType type: T.Type) -> T? {
+        let result = viewControllers.first(where: { $0 is T }) as? T
+        return result
     }
 }
