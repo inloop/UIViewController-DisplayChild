@@ -61,7 +61,7 @@ public extension UIViewController {
                             animated: Bool = true,
                             completion: VoidClosure? = nil) {
         let containerView = optionalContainerView ?? view!
-        addChildViewController(newChild)
+        addChild(newChild)
         /*
          We set the frame in advance, before autolayout does the same again in switchViews().
          This is a workaround for users who embed UICollectionView somewhere in the child and experience the
@@ -70,7 +70,7 @@ public extension UIViewController {
          */
         newChild.view.frame = containerView.bounds
         if let existingChild = childViewController(at: containerView) {
-            existingChild.willMove(toParentViewController: nil)
+            existingChild.willMove(toParent: nil)
             if animated {
                 UIView.transition(with: containerView,
                                   duration: UIViewController.embedTransitionAnimationDuration,
@@ -95,9 +95,9 @@ public extension UIViewController {
 
     func removeChildViewController(from containerView: UIView) {
         let child = childViewController(at: containerView)
-        child?.willMove(toParentViewController: nil)
+        child?.willMove(toParent: nil)
         child?.view.removeFromSuperview()
-        child?.removeFromParentViewController()
+        child?.removeFromParent()
     }
 
     func childViewController<T>(in optionalContainerView: UIView? = nil) -> T? {
@@ -122,7 +122,7 @@ public extension UIViewController {
 
     ///returns `Any` UIViewController which happens to be in the container, regardless of type
     private func childViewController(at containerView: UIView) -> UIViewController? {
-        return childViewControllers.first(where: { containerView.subviews.contains($0.view) })
+        return children.first(where: { containerView.subviews.contains($0.view) })
     }
 
     private func switchViews(in container: UIView, new: UIView, old: UIView) {
@@ -131,13 +131,13 @@ public extension UIViewController {
     }
 
     private func switchControllers(new: UIViewController, old: UIViewController) {
-        old.removeFromParentViewController()
-        new.didMove(toParentViewController: self)
+        old.removeFromParent()
+        new.didMove(toParent: self)
     }
 
     private func embed(_ child: UIViewController, in containerView: UIView) {
         containerView.pinSubview(child.view!)
-        child.didMove(toParentViewController: self)
+        child.didMove(toParent: self)
     }
 }
 

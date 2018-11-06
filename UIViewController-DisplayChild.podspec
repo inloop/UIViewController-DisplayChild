@@ -13,7 +13,7 @@ The solution: transition to type, instead of an instance. If the instance does n
   s.author           = { 'INLOOPX' => 'info@inloopx.com' }
   s.source           = { :git => 'https://github.com/inloop/UIViewController-DisplayChild.git', :tag => s.version.to_s }
   s.ios.deployment_target = '10.0'
-  s.swift_version    = '4.1'
+  s.swift_version    = '4.2'
   s.source_files = 'UIViewController-DisplayChild/**/*'
   s.exclude_files = 'UIViewController-DisplayChild/Info.plist'
 end
