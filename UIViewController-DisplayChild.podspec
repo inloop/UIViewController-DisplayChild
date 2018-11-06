@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'UIViewController-DisplayChild'
-  s.version          = '1.0.1'
+  s.version          = '2.0.0'
   s.summary          = 'UIViewController containment made easy'
   s.description      = <<-DESC
   The problem: sometimes you need to embed a controller, but it might be embedded already. E.g. you have an empty view, and you do refresh only to get empty view again. If you do not check for its existence, you might end up creating a new instance unneccessarily. This can also have bad side effects when there is some heavier work in viewDidLoad for example.
