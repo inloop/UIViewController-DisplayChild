@@ -2,8 +2,9 @@
 
 import UIKit
 
-public protocol InstantiableViewController where Self: UIViewController {
+public protocol Instantiable {
     static func makeInstance() -> Self
+    init()
 }
 
 public extension UIViewController {
@@ -23,11 +24,13 @@ public extension UIViewController {
      - Parameter completion: a closure which is called after the child view controller presentation is finished.
      - Returns: Newly created and embedded or already existing controller of specified type.
      */
-    @discardableResult func displayChild<T: InstantiableViewController>(ofType viewControllerType: T.Type,
-                                                                        in optionalContainerView: UIView? = nil,
-                                                                        animated: Bool = true,
-                                                                        configuration: ((T) -> Void)? = nil,
-                                                                        completion: ((T) -> Void)? = nil) -> T {
+    @discardableResult func displayChild<T: UIViewController & Instantiable>(
+        ofType viewControllerType: T.Type,
+        in optionalContainerView: UIView? = nil,
+        animated: Bool = true,
+        configuration: ((T) -> Void)? = nil,
+        completion: ((T) -> Void)? = nil) -> T where T: UIViewController {
+
         let result: T
         let containerView = optionalContainerView ?? view!
         if let existingController: T = childViewController(in: containerView) {
