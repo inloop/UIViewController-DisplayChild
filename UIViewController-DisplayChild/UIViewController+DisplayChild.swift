@@ -29,7 +29,7 @@ public extension UIViewController {
         in optionalContainerView: UIView? = nil,
         animated: Bool = true,
         configuration: ((T) -> Void)? = nil,
-        completion: ((T) -> Void)? = nil) -> T where T: UIViewController {
+        completion: ((T) -> Void)? = nil) -> T {
 
         let result: T
         let containerView = optionalContainerView ?? view!
