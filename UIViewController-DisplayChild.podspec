@@ -15,4 +15,5 @@ The solution: transition to type, instead of an instance. If the instance does n
   s.ios.deployment_target = '10.0'
   s.swift_version    = '4.1'
   s.source_files = 'UIViewController-DisplayChild/**/*'
+  s.exclude_files = 'UIViewController-DisplayChild/Info.plist'
 end
