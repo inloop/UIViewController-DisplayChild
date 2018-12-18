@@ -24,12 +24,11 @@ public extension UIViewController {
      - Parameter completion: a closure which is called after the child view controller presentation is finished.
      - Returns: Newly created and embedded or already existing controller of specified type.
      */
-    @discardableResult func displayChild<T: UIViewController & Instantiable>(
-        ofType viewControllerType: T.Type,
-        in optionalContainerView: UIView? = nil,
-        animated: Bool = true,
-        configuration: ((T) -> Void)? = nil,
-        completion: ((T) -> Void)? = nil) -> T {
+    @discardableResult func displayChild<T: UIViewController & Instantiable>(ofType viewControllerType: T.Type,
+                                                                             in optionalContainerView: UIView? = nil,
+                                                                             animated: Bool = true,
+                                                                             configuration: ((T) -> Void)? = nil,
+                                                                             completion: ((T) -> Void)? = nil) -> T {
 
         let result: T
         let containerView = optionalContainerView ?? view!
@@ -44,6 +43,53 @@ public extension UIViewController {
                 completion?(newController)
             }
             result = newController
+        }
+        return result
+    }
+
+    /**
+     Detects if a child view controller of specified type is already embedded in stack view.
+     If it is, configuration and completion closures are called on existing and this one is returned.
+     If it does not exist yet, it is instantiated, configured and embedded in specified container view.
+     - Parameter ofType: a view controller type to embed
+     - Parameter in: a stack view to embed child to.
+     - Parameter at: index of stackView's arrangedSubviews, where to insert. Will append, if `nil`.
+     - Parameter animated: insertion is animated if `true`
+     - Parameter configuration: a closure which is called after the controller is initialized.
+     This is where you can configure the controller before presenting.
+     - Parameter completion: a closure which is called after the child view controller presentation is finished.
+     - Returns: Newly created and embedded or already existing controller of specified type.
+     */
+    @discardableResult func insertChild<T: UIViewController & Instantiable>(ofType viewControllerType: T.Type,
+                                                                            in stackView: UIStackView,
+                                                                            at index: Int? = nil,
+                                                                            animated: Bool,
+                                                                            configuration: ((T) -> Void)? = nil,
+                                                                            completion: ((T) -> Void)? = nil) -> T {
+        let result: T
+        if let existingController: T = childViewController(in: stackView, at: index) {
+            configuration?(existingController)
+            completion?(existingController)
+            result = existingController
+        } else {
+            result = viewControllerType.makeInstance()
+            configuration?(result)
+            addChild(result)
+            if animated {
+                result.view.isHidden = true
+                stackView.addSubview(result.view, at: index)
+                UIView.animate(
+                    withDuration: UIViewController.embedTransitionAnimationDuration,
+                    animations: { result.view.isHidden = false },
+                    completion: { _ in
+                        result.didMove(toParent: self)
+                        completion?(result)
+                })
+            } else {
+                stackView.addSubview(result.view, at: index)
+                result.didMove(toParent: self)
+                completion?(result)
+            }
         }
         return result
     }
@@ -103,6 +149,25 @@ public extension UIViewController {
         child?.removeFromParent()
     }
 
+    func removeChildViewController<T: UIViewController>(ofType viewControllerType: T.Type,
+                                                        from stackView: UIStackView,
+                                                        at index: Int? = nil,
+                                                        animated: Bool) {
+        guard let child: T = childViewController(in: stackView, at: index) else { return }
+        child.willMove(toParent: nil)
+        if animated {
+            UIView.animate(withDuration: UIViewController.embedTransitionAnimationDuration,
+                           animations: { child.view.isHidden = true },
+                           completion: { _ in
+                            child.view.removeFromSuperview()
+                            child.removeFromParent()
+            })
+        } else {
+            child.view.removeFromSuperview()
+            child.removeFromParent()
+        }
+    }
+
     func childViewController<T>(in optionalContainerView: UIView? = nil) -> T? {
         let containerView = optionalContainerView ?? view!
         let result: T?
@@ -116,6 +181,33 @@ public extension UIViewController {
             result = nil
         }
         return result
+    }
+
+    /**
+     Finds a child view controller of type T, whose view is in arranged subviews in UIStackView at specified index.
+     If you are sure that there is only one child controller of this type in a stack view you can omit the index
+     parameter and the method returns the first controller it finds.
+     - Parameter in: a stack view to search in
+     - Parameter at: optional index in stackView's `arrangedSubviews`.
+     - Returns: child view controller of type T, whose view is in arranged subviews in UIStackView at specified index.
+     If index is `nil` it is the first child of type T encountered.
+     */
+    func childViewController<T>(in stackView: UIStackView, at index: Int? = nil) -> T? {
+        if let index = index {
+            guard index < stackView.arrangedSubviews.count else { return nil }
+            let view = stackView.arrangedSubviews[index]
+            let child = children.first(where: { $0.view == view})
+            return child as? T
+        } else {
+            var result: T?
+            stackView.arrangedSubviews.forEach { view in
+                let child = children.first(where: { $0.view == view})
+                if let searchResult = child as? T {
+                    result = searchResult
+                }
+            }
+            return result
+        }
     }
 
     func hasChild<T>(ofType controllerType: T.Type, in optionalContainerView: UIView? = nil) -> Bool {
@@ -159,5 +251,15 @@ private extension UINavigationController {
     func viewController<T>(ofType type: T.Type) -> T? {
         let result = viewControllers.first(where: { $0 is T }) as? T
         return result
+    }
+}
+
+private extension UIStackView {
+    func addSubview(_ view: UIView, at index: Int?) {
+        if let index = index {
+            insertArrangedSubview(view, at: index)
+        } else {
+            addArrangedSubview(view)
+        }
     }
 }
