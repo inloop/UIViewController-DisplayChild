@@ -8,7 +8,7 @@ public protocol Instantiable {
 }
 
 public extension UIViewController {
-    public typealias VoidClosure = () -> Void
+    typealias VoidClosure = () -> Void
 
     static let embedTransitionAnimationDuration = 0.25
 
