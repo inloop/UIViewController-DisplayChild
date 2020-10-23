@@ -2,9 +2,9 @@
 # * https://www.objc.io/issues/6-build-tools/travis-ci/
 # * https://github.com/supermarin/xcpretty#usage
 
-osx_image: xcode10.2
+osx_image: xcode12.2
 language: swift
 cache: cocoapods
 script:
 - pod lib lint
-- set -o pipefail && xcodebuild -project UIViewController-DisplayChild.xcodeproj -scheme UIViewController-DisplayChild -sdk iphonesimulator12.2 ONLY_ACTIVE_ARCH=NO | xcpretty
+- set -o pipefail && xcodebuild -project UIViewController-DisplayChild.xcodeproj -scheme UIViewController-DisplayChild -sdk iphonesimulator14.2 ONLY_ACTIVE_ARCH=NO | xcpretty
